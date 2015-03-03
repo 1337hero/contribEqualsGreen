@@ -4,7 +4,7 @@ echo "------------------------------"
 echo "Modifying contribEqualsGreen"
 echo "------------------------------"
 
-# sh contrib.sh -d /User/USERNAME/Sites/PROJECT -u GITHUB_USERNAME -p GITHUB_PASSWORD
+# sh contrib.sh -d /Users/mikekey/Dropbox/_projects/contribPlusGreen -u GITHUB_USERNAME -p GITHUB_PASSWORD
 
 while true ; do
     case "$1" in
