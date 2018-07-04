@@ -36,17 +36,20 @@ while true ; do
     esac 
 done;
 
-# Add to end
-echo " " >> README.md
-
-git add README.md
-git commit -m 'added extra spacing'
-git remote set-url origin https://github.com/1337hero/contribEqualsGreen.git
-git push -u origin master --repo "https://github.com/1337hero/contribEqualsGreen.git"
-
-# Remove added char\#
+# Nuke README
 sed 's/[ \t]*$//' README.md > README.md
 
 git add README.md
-git commit -m 'clean white space' # --date=\"$(date -r)\" # to set date of commit
+git commit -m 'start with a blank slate'
+git remote set-url origin https://github.com/1337hero/contribEqualsGreen.git
+git push -u origin master --repo "https://github.com/1337hero/contribEqualsGreen.git"
+
+# Add the README
+echo "# Making GitHub Green
+This is a simple, and fun little shell script, that just adds whitespace, then deletes white space to this README. Then it pushes to Github.
+
+That’s all there is to it. =) " >> README.md
+
+git add README.md
+git commit -m 'put the content back'
 git push -u origin master
