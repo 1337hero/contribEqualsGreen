@@ -14,14 +14,6 @@ while true ; do
             cd $2
             shift 2
         ;;
-        -p )
-            password=$2
-            shift 2
-        ;;
-        --password )
-            password=$2
-            shift 2
-        ;;
         -u )
             username=$2
             shift 2
@@ -41,8 +33,8 @@ sed 's/[ \t]*$//' README.md > README.md
 
 git add README.md
 git commit -m 'start with a blank slate'
-git remote set-url origin https://github.com/1337hero/contribEqualsGreen.git
-git push -u origin master --repo "https://github.com/1337hero/contribEqualsGreen.git"
+git remote set-url origin git@github.com:1337hero/contribEqualsGreen.git
+git push -u origin master --repo "git@github.com:1337hero/contribEqualsGreen.git"
 
 # Add the README
 echo "# Making GitHub Green
