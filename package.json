@@ -1,0 +1,11 @@
+{
+  "name": "contribequalsgreen",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node runContrib.js"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}
