@@ -28,20 +28,16 @@ while true ; do
     esac 
 done;
 
-# Nuke README
-sed 's/[ \t]*$//' README.md > README.md
+# Add trailing whitespace to each line
+sed -i 's/$/ /' README.md
 
 git add README.md
-git commit -m 'start with a blank slate'
-git remote set-url origin git@github.com:1337hero/contribEqualsGreen.git
-git push -u origin master --repo "git@github.com:1337hero/contribEqualsGreen.git"
+git commit -m 'add whitespace'
+git push
 
-# Add the README
-echo "# Making GitHub Green
-This is a simple, and fun little shell script, that just adds whitespace, then deletes white space to this README. Then it pushes to Github.
-
-That’s all there is to it. =) " >> README.md
+# Remove trailing whitespace from each line
+sed -i 's/[[:space:]]*$//' README.md
 
 git add README.md
-git commit -m 'put the content back'
-git push -u origin master
+git commit -m 'remove whitespace'
+git push
