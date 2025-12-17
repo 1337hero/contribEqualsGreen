@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "repos": [
+    "/home/mikekey/Projects/0_CHATS/faster-chat",
+    "/home/mikekey/Projects/1_Rust/inkwell-solid",
+    "/home/mikekey/Sites/mk3y.com",
+    "/home/mikekey/Sites/mikekey.com",
+    "/home/mikekey/Sites/fasterchat.ai"
+  ],
+  "reposPerRun": 2,
+  "maxReposPerRun": 5,
+  "method": "empty-commit",
+  "dryRun": true,
+  "exclude": [],
+  "targetBranch": null
+}

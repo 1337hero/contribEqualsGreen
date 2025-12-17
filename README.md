@@ -1,129 +1,121 @@
 # GitHub Contribution Generator
 
-A super simple tool to keep your GitHub activity graph looking alive by making small tweaks to this README every day. It alternates between adding and removing whitespace, making a commit each time. (Don't actually use this!!)
+> **Hey!** This is just a fun experiment - you probably shouldn't run this, but it's fun to learn from. Built for tinkering, not for gaming your contribution graph. Be cool.
 
-## How It Works
+A Node.js tool that generates GitHub contributions across multiple repos by making empty commits on a rotating schedule.
 
-Here's the deal:
+## What It Does
 
-1. The script adds trailing whitespace to each line in this README.
-2. It commits and pushes the changes.
-3. Then it strips the trailing whitespace.
-4. Another commit and push happen.
+- Rotates through a list of repos you configure
+- Makes empty commits (no file changes) with alternating messages
+- Tracks state so each repo alternates between "pulse" and "beat" commits
+- Shuffles repo order each cycle for variety
+- Includes safety checks: lock files, preflight validation, dry-run mode
 
-That's two contributions to your GitHub graph every time it runs. Easy peasy.
+## Configuration
 
-## What You’ll Need
+Edit `config.json`:
 
-- Git set up with SSH access to GitHub.
-- Node.js installed.
-- A Linux system with systemd (if you want it to run automatically).
-
-## Getting Started
-
-1. Clone the repo:
-   ```bash
-   git clone https://github.com/1337hero/contribEqualsGreen.git
-   cd contribEqualsGreen
-   ```
-
-2. Install the dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Make the script executable:
-   ```bash
-   chmod +x contrib.sh
-   ```
-
-## Running It Manually
-
-Just fire it up whenever you want:
-```bash
-npm start
+```json
+{
+  "version": 1,
+  "repos": [
+    "/path/to/repo1",
+    "/path/to/repo2",
+    "/path/to/repo3"
+  ],
+  "reposPerRun": 2,
+  "maxReposPerRun": 5,
+  "method": "empty-commit",
+  "dryRun": true,
+  "exclude": [],
+  "targetBranch": null
+}
 ```
 
-## Setting It Up to Run Daily (Linux/systemd)
+| Setting | What it does |
+|---------|--------------|
+| `repos` | Paths to git repos with remotes |
+| `reposPerRun` | How many repos to hit each run |
+| `method` | `"empty-commit"` or `"heartbeat-file"` |
+| `dryRun` | Set `false` when ready for real commits |
+| `exclude` | Patterns to skip |
+| `targetBranch` | `null` = auto-detect default branch |
 
-Want it to run every day without you lifting a finger? Here’s how to set up a systemd timer:
+## Running It
 
-1. Create a service file at `/etc/systemd/system/github-contrib.service`:
-   ```ini
-   [Unit]
-   Description=GitHub Contribution Generator
-   After=network-online.target
-   Wants=network-online.target
+```bash
+# Install deps
+npm install
 
-   [Service]
-   Type=oneshot
-   User=YOUR_USERNAME
-   WorkingDirectory=/path/to/contribEqualsGreen
-   Environment=PATH=/usr/local/bin:/usr/bin:/bin
-   ExecStart=/usr/bin/node runContrib.js
+# Dry run (default - no actual commits)
+npm start
 
-   [Install]
-   WantedBy=multi-user.target
-   ```
+# Or directly
+node runContrib.js
+```
 
-2. Create a timer file at `/etc/systemd/system/github-contrib.timer`:
-   ```ini
-   [Unit]
-   Description=Run GitHub Contribution Generator Daily
+## Preflight Checks
 
-   [Timer]
-   OnCalendar=*-*-* 00:00:00
-   Persistent=true
+Before touching any repo, the script verifies:
+- Path exists and is a git repo
+- Has an origin remote
+- Working tree is clean
+- On the correct branch
 
-   [Install]
-   WantedBy=timers.target
-   ```
+If any check fails, that repo is skipped and state is preserved.
 
-3. Enable and start the timer:
-   ```bash
-   sudo systemctl enable github-contrib.timer
-   sudo systemctl start github-contrib.timer
-   ```
+## State Tracking
 
-4. Check that it’s running:
-   ```bash
-   systemctl status github-contrib.timer
-   ```
+`state.json` (auto-generated) tracks:
+- Which action each repo did last (for alternating)
+- Shuffled rotation order
+- Failure counts per repo
 
-### Turning It Off
+State is keyed by origin URL, so moving folders won't lose history.
 
-Need to stop the automation? No problem.
+## Systemd Setup (Linux)
 
-1. Disable and stop the timer/service:
-   ```bash
-   sudo systemctl stop github-contrib.timer
-   sudo systemctl stop github-contrib.service
-   sudo systemctl disable github-contrib.timer
-   sudo systemctl disable github-contrib.service
-   ```
+Create `~/.config/systemd/user/github-contrib.service`:
+```ini
+[Unit]
+Description=GitHub Contribution Generator
+After=network-online.target
 
-2. Delete the systemd files:
-   ```bash
-   sudo rm /etc/systemd/system/github-contrib.timer
-   sudo rm /etc/systemd/system/github-contrib.service
-   ```
+[Service]
+Type=oneshot
+WorkingDirectory=/path/to/contribEqualsGreen
+ExecStart=/usr/bin/node runContrib.js
 
-3. Reload systemd:
-   ```bash
-   sudo systemctl daemon-reload
-   ```
+[Install]
+WantedBy=default.target
+```
 
-## A Few Things to Keep in Mind
+Create `~/.config/systemd/user/github-contrib.timer`:
+```ini
+[Unit]
+Description=Run GitHub Contribution Generator Daily
 
-- Replace `YOUR_USERNAME` in the service file with your Linux username.
-- Update the `WorkingDirectory` path to wherever you cloned this repo.
-- Make sure your Git SSH keys are set up right.
-- If this is just for fun, maybe use a separate GitHub account for the automation.
+[Timer]
+OnCalendar=daily
+Persistent=true
 
-## Just a Heads-Up
+[Install]
+WantedBy=timers.target
+```
 
-This is a fun little project for learning and experimentation. Don’t forget to check GitHub’s terms of service when using automation like this.
+Enable:
+```bash
+systemctl --user enable github-contrib.timer
+systemctl --user start github-contrib.timer
+```
+
+Stop:
+```bash
+systemctl --user stop github-contrib.timer
+systemctl --user disable github-contrib.timer
+```
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
+MIT
